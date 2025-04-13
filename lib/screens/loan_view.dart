@@ -15,7 +15,8 @@ class _LoanViewState extends State<LoanView> {
 
         //* Headline   
         Text('Add Loan'),
-        
+
+        // todo: implements other components here
 
       ],
     );
