@@ -1,61 +1,33 @@
-# E&L Tracker App 🚀
+# 💰 Expense & Loan Tracker (Flutter)
 
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Build Status](https://img.shields.io/travis/username/repo/master)](https://travis-ci.org/username/repo)
-[![Version](https://img.shields.io/npm/v/package-name)](https://www.npmjs.com/package/package-name)
-[![Contributors](https://img.shields.io/github/contributors/username/repo)](https://github.com/username/repo/graphs/contributors)
-[![Last Commit](https://img.shields.io/github/last-commit/username/repo)](https://github.com/username/repo/commits/master)
+[![Flutter](https://img.shields.io/badge/Flutter-3.19-blue?logo=flutter)](https://flutter.dev)
+[![SQLite](https://img.shields.io/badge/SQLite-3.43-green?logo=sqlite)](https://sqlite.org)
 
-A brief tagline describing your project.
+A **Flutter mobile application** for tracking personal expenses and loan offers with local database persistence using `sqflite`.
 
-![Project Screenshot or Demo GIF](demo.gif)
+![App Screenshot](screenshot.png) *(Replace with your actual screenshot)*
 
-## Table of Contents 📖
+---
 
-- [Features](#features-)
-- [Installation](#installation-)
-- [Usage](#usage-)
-- [Configuration](#configuration-)
-- [API Reference](#api-reference-)
-- [Tests](#tests-)
-- [Project Structure](#project-structure-)
-- [Contributing](#contributing-)
-- [Code of Conduct](#code-of-conduct-)
-- [FAQ](#faq-)
-- [Roadmap](#roadmap-)
-- [License](#license-)
-- [Acknowledgements](#acknowledgements-)
-- [Contact](#contact-)
+## ✨ Key Features
+- **Expense Tracking**: Record daily/weekly/monthly expenses with categories
+- **Loan Management**: Track loan offers (amount, interest, duration)
+- **Visual Reports**: Charts/graphs for spending patterns
+- **Local Storage**: All data stored locally via `sqflite`
+- **Dark/Light Mode**: Theme support
+- **Export Data**: Generate CSV/PDF reports
 
-## Features ✨
+---
 
-- **Feature 1**: Detailed description
-- **Feature 2**: With benefits explained
-- **Feature 3**: Any special capabilities
-- **Feature 4**: Performance metrics if relevant
-
-## Installation 🛠️
-
+## 🛠️ Installation
 ### Prerequisites
+- Flutter SDK (>= 3.19.0)
+- Dart (>= 3.3.0)
+- Android Studio/Xcode (for emulators)
 
-- Node.js 14+
-- Python 3.8+ (if applicable)
-- PostgreSQL 12+ (if applicable)
-
-### Setup Instructions
-
-```bash
-# Clone the repository
-git clone https://github.com/username/repo.git
-
-# Navigate to project directory
-cd repo
-
-# Install dependencies
-npm install
-
-# Set up environment variables
-cp .env.example .env
-
-# Run database migrations (if applicable)
-npm run migrate
+### Steps
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/yourusername/expense-loan-tracker.git
+   cd expense-loan-tracker
