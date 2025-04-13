@@ -6,7 +6,7 @@
 
 A **Flutter mobile application** for tracking personal expenses and loan offers with local database persistence using `sqflite`.
 
-![App Screenshot](screenshot.png) *(Replace with your actual screenshot)*
+![App Screenshot](assets/images/app.jpg) *(Replace with your actual screenshot)*
 
 ---
 
