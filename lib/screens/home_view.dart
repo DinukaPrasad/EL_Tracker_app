@@ -1,4 +1,4 @@
-import 'package:eltracker_app/components/list_views/deu_payment_card.dart';
+import 'package:eltracker_app/widgets/deu_payment_card.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 

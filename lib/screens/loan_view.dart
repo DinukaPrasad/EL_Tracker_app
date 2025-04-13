@@ -10,6 +10,14 @@ class LoanView extends StatefulWidget {
 class _LoanViewState extends State<LoanView> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Column(
+      children: [
+
+        //* Headline   
+        Text('Add Loan'),
+        
+
+      ],
+    );
   }
 }
