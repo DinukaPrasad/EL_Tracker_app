@@ -11,8 +11,8 @@ class HomePageView extends StatefulWidget {
 
 class _HomePageViewState extends State<HomePageView> {
 
-  // ignore: non_constant_identifier_names
-  final List _DeuPaymentCardList = [ '1','2','3','4','5','6'];
+  
+  final List deuPaymentCardList = [ '1','2','3','4','5','6'];
 
   @override
   Widget build(BuildContext context) {
@@ -85,9 +85,9 @@ class _HomePageViewState extends State<HomePageView> {
           child: Padding(
             padding: const EdgeInsets.only(left: 20.0 , right: 20.0, top: 10.0),
             child: ListView.builder(
-              itemCount: _DeuPaymentCardList.length,
+              itemCount: deuPaymentCardList.length,
               itemBuilder: (context, index) {
-                return DeuPaymentCard(cardCount: _DeuPaymentCardList[index],);
+                return DeuPaymentCard(cardCount: deuPaymentCardList[index],);
               },
             ),
           ),
