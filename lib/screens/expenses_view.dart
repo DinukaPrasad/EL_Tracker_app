@@ -56,6 +56,7 @@ class _ExpensesViewState extends State<ExpensesView> {
               child: ListView.builder(
                 itemCount: expensesCards.length,
                 itemBuilder: (context , index){
+                  
                   return ExpenseCard(cardCount: expensesCards[index],);
                 },
                 ),
