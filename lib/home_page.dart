@@ -2,9 +2,11 @@ import 'package:eltracker_app/screens/expenses_view.dart';
 import 'package:eltracker_app/screens/home_view.dart';
 import 'package:eltracker_app/screens/loan_view.dart';
 import 'package:flutter/material.dart';
-
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+
+  final String username;
+
+  const HomePage({super.key , required this.username});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -18,7 +20,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Hi, Username'),
+        title: Text('Hi,${widget.username}'),
         actions: <Widget>[
           IconButton(
             onPressed: (){},

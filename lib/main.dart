@@ -1,8 +1,16 @@
-import 'package:eltracker_app/home_page.dart';
+import 'package:eltracker_app/config/firebase_options.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-void main() {
-  runApp(const MyApp());
+//import 'package:eltracker_app/home_page.dart';
+import 'package:eltracker_app/screens/login_view.dart';
+
+Future<void> main() async {
+    WidgetsFlutterBinding.ensureInitialized();
+      await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    runApp(const MyApp());
 }
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -16,7 +24,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.greenAccent),
       ),
-      home: const HomePage(),
+      home: const LoginView(),
     );
   }
 }
