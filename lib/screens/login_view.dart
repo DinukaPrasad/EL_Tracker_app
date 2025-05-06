@@ -1,12 +1,9 @@
-import 'dart:math';
-
-import 'package:eltracker_app/home_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:eltracker_app/controller/auth_service.dart';
 
 import 'package:eltracker_app/screens/register_view.dart';
-
+import 'package:eltracker_app/home_page.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -16,41 +13,38 @@ class LoginView extends StatefulWidget {
 }
 
 class _LoginViewState extends State<LoginView> {
-
-  var email = TextEditingController();
-  var password = TextEditingController();
+  final TextEditingController email = TextEditingController();
+  final TextEditingController password = TextEditingController();
 
   void login() async {
-
     try {
-        await authService.value.singIn(email: email.text.trim(), password: password.text.trim());
+      await authService.value.singIn(
+        email: email.text.trim(),
+        password: password.text.trim(),
+      );
 
-        if (mounted) {
-          Navigator.pushReplacement(
-            context, 
-            MaterialPageRoute(builder: (context)=>HomePage(username: email.text)),
-          );
-        }
-
+      if (mounted) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (context) => HomePage(username: email.text),
+          ),
+        );
+      }
     } on FirebaseException catch (e) {
-          print(e);
+      // ignore: avoid_print
+      print(e);
     }
-
   }
-
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Login page'),
-      ),
+      appBar: AppBar(title: Text('Login page')),
       body: Padding(
-        padding: const EdgeInsets.only(left: 10 , right: 10),
+        padding: const EdgeInsets.only(left: 10, right: 10),
         child: Column(
           children: [
-        
             //*user name area
             Text('User Name'),
             TextField(
@@ -62,8 +56,8 @@ class _LoginViewState extends State<LoginView> {
               ),
               keyboardType: TextInputType.emailAddress,
             ),
-        
-            //* password area 
+
+            //* password area
             Text('Password'),
             TextField(
               controller: password,
@@ -74,21 +68,24 @@ class _LoginViewState extends State<LoginView> {
               ),
               keyboardType: TextInputType.text,
             ),
-            
+
             ElevatedButton(
               child: Text('Login'),
               onPressed: () {
                 login();
-              }, 
-              ),
+              },
+            ),
 
-              TextButton(
-                onPressed: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (context)=>RegisterView()));
-                },
+            TextButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => RegisterView()),
+                );
+              },
 
-                child: Text('Don\'t have an account'),
-              ),
+              child: Text('Don\'t have an account'),
+            ),
           ],
         ),
       ),
