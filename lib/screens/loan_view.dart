@@ -9,12 +9,9 @@ class LoanView extends StatefulWidget {
 }
 
 class _LoanViewState extends State<LoanView> {
-
-  //* controller for text fields 
   final TextEditingController _amountController = TextEditingController();
   final TextEditingController _interestController = TextEditingController();
   final TextEditingController _reasonController = TextEditingController();
-
 
   String? _selectedClient;
   bool _pendingChecked = true;
@@ -25,21 +22,18 @@ class _LoanViewState extends State<LoanView> {
     final DateTime? picked = await showDatePicker(
       context: context,
       initialDate: _receiveDate ?? DateTime.now(),
-      firstDate: DateTime.now(), 
-      lastDate: DateTime(2100),
-      );
+      firstDate: DateTime.now(),
+      lastDate: DateTime(2050),
+    );
 
-      if(picked != null && picked != _receiveDate){
-        setState(() {
-          _receiveDate = picked;
-        });
-      }
+    if (picked != null && picked != _receiveDate) {
+      setState(() {
+        _receiveDate = picked;
+      });
+    }
   }
 
-  //* loan list
-
-  final List loanList = ['1','2','3','4','5','6','7'];
-
+  final List loanList = ['1', '2', '3', '4', '5', '6', '7'];
 
   @override
   void dispose() {
@@ -51,189 +45,276 @@ class _LoanViewState extends State<LoanView> {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(left: 20 , right: 20),
-      child: SingleChildScrollView(
-        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-        child: Column(
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
+        child: SingleChildScrollView(
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Header with title and action buttons
+              _buildHeader(),
+
+              const SizedBox(height: 24),
+
+              // Input card
+              Card(
+                elevation: 2,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: _buildInputForm(),
+                ),
+              ),
+
+              const SizedBox(height: 24),
+
+              // Loan list section
+              _buildLoanListSection(),
+
+              const SizedBox(height: 16),
+
+              // Loan list
+              SizedBox(
+                height: 250,
+                child: ListView.builder(
+                  itemCount: loanList.length,
+                  itemBuilder: (context, index) {
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: DeuPaymentCard(cardCount: loanList[index]),
+                    );
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildHeader() {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        const Text(
+          'Add Loan',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildInputForm() {
+    return Column(
+      children: [
+        // Client selection
+        _buildFormField(
+          label: 'Client Name',
+          child: DropdownMenu<String>(
+            label: const Text('Select client'),
+            leadingIcon: const Icon(Icons.search),
+            width: MediaQuery.of(context).size.width - 100,
+            menuHeight: 200,
+            enableFilter: true,
+            dropdownMenuEntries: const [
+              DropdownMenuEntry(value: 'Dinuka', label: 'Dinuka'),
+              DropdownMenuEntry(value: 'Shaki', label: 'Shaki'),
+              DropdownMenuEntry(value: 'Henzer', label: 'Henzer'),
+            ],
+            onSelected: (String? value) {
+              _selectedClient = value;
+              // ignore: avoid_print
+              print(_selectedClient);
+            },
+          ),
+        ),
+
+        const SizedBox(height: 16),
+
+        // Amount and interest in a row
+        Row(
           children: [
-            //* Headline   
-            Text('Add Loan'),
-        
-            //* Input area
-            Column(
-              children: [
-                Row(
-                  children: [
-                    Text('Clint Name :'),
-        
-                    DropdownMenu(
-                      label: const Text('Select client'),
-                      leadingIcon: Icon(Icons.search),
-                      width: 250,
-                      menuHeight: 100.00,   //! set menu hight
-                      enableFilter: true,
-        
-                      dropdownMenuEntries: <DropdownMenuEntry<String>>[
-                        DropdownMenuEntry(value: 'Dinuka', label: 'Dinuka'),
-                        DropdownMenuEntry(value: 'Shaki', label: 'Shaki'),
-                        DropdownMenuEntry(value: 'Henzer', label: 'Henzer'),
-                      ],
-        
-                      onSelected: (String? value){
-                        _selectedClient = value;
-        
-                        // ignore: avoid_print
-                        print(_selectedClient);
-                      },
-                    ),
-                  ],
+            Expanded(
+              child: _buildFormField(
+                label: 'Amount',
+                child: TextField(
+                  controller: _amountController,
+                  decoration: _inputDecoration('Enter Amount', '1000'),
+                  keyboardType: TextInputType.number,
                 ),
-                Row(
-                  children: [
-                    Text('Amount :'),
-                    Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          labelText: 'Enter Amount',
-                          hintText: '1000',
-                          border: OutlineInputBorder(),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                        ),
-                        keyboardType: TextInputType.number,
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Text('Interest :'),
-                    Expanded(
-                      child: TextField(
-                        decoration: InputDecoration(
-                          labelText: 'Enter Interest',
-                          hintText: '10',
-                          border: OutlineInputBorder(),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                        ),
-                        keyboardType: TextInputType.number,
-                      ),
-                    ),
-                  ],
-                ),
-                Row(
-                  children: [
-                    Text('Receive Date :'),
-                    Expanded(
-                      child: OutlinedButton(
-                        onPressed: ()=>  _selectDate(context),
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                          alignment: Alignment.centerLeft,
-                        ),
-                        child: Text(
-                          _receiveDate == null
-                          ? 'Select Date'
-                          : '${_receiveDate!.day}/${_receiveDate!.month}/${_receiveDate!.year}',
-                        )
-                        ),
-                    )
-                  ],
-                ),
-                
-                Row(
-                  children: [
-                    Text('Reason :'),
-                    Expanded(
-                      child: TextField( 
-                        decoration: InputDecoration(
-                          labelText: 'Enter Reason',
-                          hintText: 'For Emergency',
-                          border: OutlineInputBorder(),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                        ),
-                        keyboardType: TextInputType.text,
-                      ),
-                    ),
-                  ],
-                ),
-        
-                Row(
-                  children: [
-                    ElevatedButton(
-                      onPressed: (){}, 
-                      child: Text('Clear')
-                    ),
-                    ElevatedButton(
-                      onPressed: (){}, 
-                      child: Text('Submit')
-                    ),         
-                  ],
-                ),
-              ],
+              ),
             ),
-        
-            //*Loan list headline
-            Text('Loan List'),
-        
-            //* checkbox List area
-            Row(
-              children: [
-                // todo: add 2 check box for filter loans by loan status (named pending and paid) 
-                //! use checkboxListTile for this
-        
-                // Expanded(
-                //   child: TextField( 
-                //     decoration: InputDecoration(
-                //         labelText: 'Search',
-                //         border: OutlineInputBorder(),
-                //         contentPadding: EdgeInsets.symmetric(horizontal: 10),
-                //       ),
-                //     keyboardType: TextInputType.text,    
-                //   ),
-                // ),
-            
-                Expanded(
-                  child: CheckboxListTile(
-                    title: Text('Pending'),
-                    value: _pendingChecked,
-                    onChanged: (bool? value){
-                      setState(() {
-                        _pendingChecked = value!;
-                      });
-                    },
-                            
-                  ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: _buildFormField(
+                label: 'Interest %',
+                child: TextField(
+                  controller: _interestController,
+                  decoration: _inputDecoration('Enter Interest', '10'),
+                  keyboardType: TextInputType.number,
                 ),
-        
-                Expanded(
-                  child: CheckboxListTile(
-                    title: Text('paid'),
-                    value: _paidChecked,
-                    onChanged: (bool? value){
-                      setState(() {
-                        _paidChecked = value!;
-                      });
-                    },
-                            
-                  ),
-                ),
-              ],
+              ),
             ),
-        
-            //*list view
-            SizedBox(
-              height: 250,
-              child: ListView.builder(
-                itemCount: loanList.length,
-                itemBuilder: (context , index){
-                  return DeuPaymentCard(cardCount: loanList[index],); 
+          ],
+        ),
+
+        const SizedBox(height: 16),
+
+        // Date and reason
+        _buildFormField(
+          label: 'Receive Date',
+          child: OutlinedButton(
+            onPressed: () => _selectDate(context),
+            style: OutlinedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              alignment: Alignment.centerLeft,
+              side: BorderSide(color: Colors.grey.shade300),
+            ),
+            child: Text(
+              _receiveDate == null
+                  ? 'Select Date'
+                  : '${_receiveDate!.day}/${_receiveDate!.month}/${_receiveDate!.year}',
+              style: TextStyle(
+                color:
+                    _receiveDate == null ? Colors.grey.shade600 : Colors.black,
+              ),
+            ),
+          ),
+        ),
+
+        const SizedBox(height: 16),
+
+        _buildFormField(
+          label: 'Reason',
+          child: TextField(
+            controller: _reasonController,
+            decoration: _inputDecoration('Enter Reason', 'For Emergency'),
+            keyboardType: TextInputType.text,
+            maxLines: 2,
+          ),
+        ),
+
+        const SizedBox(height: 24),
+
+        // Action buttons
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            OutlinedButton(
+              onPressed: () {
+                _amountController.clear();
+                _interestController.clear();
+                _reasonController.clear();
+                setState(() {
+                  _receiveDate = null;
+                  _selectedClient = null;
+                });
+              },
+              style: OutlinedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+                side: BorderSide(color: Theme.of(context).primaryColor),
+              ),
+              child: Text(
+                'Clear',
+                style: TextStyle(color: Theme.of(context).primaryColor),
+              ),
+            ),
+            const SizedBox(width: 12),
+            ElevatedButton(
+              onPressed: () {},
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+                backgroundColor: Theme.of(context).primaryColor,
+              ),
+              child: const Text(
+                'Submit',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFormField({required String label, required Widget child}) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
+        ),
+        const SizedBox(height: 8),
+        child,
+      ],
+    );
+  }
+
+  InputDecoration _inputDecoration(String label, String hint) {
+    return InputDecoration(
+      labelText: label,
+      hintText: hint,
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: Colors.grey.shade300),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: Colors.grey.shade300),
+      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    );
+  }
+
+  Widget _buildLoanListSection() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'Loan List',
+          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 12),
+        // Filter options
+        Row(
+          children: [
+            Expanded(
+              child: FilterChip(
+                label: const Text('Pending'),
+                selected: _pendingChecked,
+                onSelected: (bool value) {
+                  setState(() {
+                    _pendingChecked = value;
+                  });
+                },
+              ),
+            ),
+            Expanded(
+              child: FilterChip(
+                label: const Text('Paid'),
+                selected: _paidChecked,
+                onSelected: (bool value) {
+                  setState(() {
+                    _paidChecked = value;
+                  });
                 },
               ),
             ),
           ],
         ),
-      ),
+      ],
     );
   }
 }
