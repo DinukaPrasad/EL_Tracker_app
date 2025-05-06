@@ -17,24 +17,15 @@ import 'package:flutter/foundation.dart'
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
-      throw UnsupportedError(
-        'DefaultFirebaseOptions have not been configured for web - '
-        'you can reconfigure this by running the FlutterFire CLI again.',
-      );
+      return web;
     }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
       case TargetPlatform.iOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for ios - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return ios;
       case TargetPlatform.macOS:
-        throw UnsupportedError(
-          'DefaultFirebaseOptions have not been configured for macos - '
-          'you can reconfigure this by running the FlutterFire CLI again.',
-        );
+        return macos;
       case TargetPlatform.windows:
         throw UnsupportedError(
           'DefaultFirebaseOptions have not been configured for windows - '
@@ -59,4 +50,33 @@ class DefaultFirebaseOptions {
     projectId: 'el-tracker-8dcc8',
     storageBucket: 'el-tracker-8dcc8.firebasestorage.app',
   );
+
+  static const FirebaseOptions web = FirebaseOptions(
+    apiKey: 'AIzaSyDWvrAJYs5FfCDsWJHhObbMi2RJvVzMRnI',
+    appId: '1:1091612498519:web:36db80c1d2babac5112112',
+    messagingSenderId: '1091612498519',
+    projectId: 'el-tracker-8dcc8',
+    authDomain: 'el-tracker-8dcc8.firebaseapp.com',
+    storageBucket: 'el-tracker-8dcc8.firebasestorage.app',
+    measurementId: 'G-838YVDC3PX',
+  );
+
+  static const FirebaseOptions macos = FirebaseOptions(
+    apiKey: 'AIzaSyB3LiYZCw8RsHM07fX-NeBGV0kI9uzZlHY',
+    appId: '1:1091612498519:ios:11d818940d9c2fca112112',
+    messagingSenderId: '1091612498519',
+    projectId: 'el-tracker-8dcc8',
+    storageBucket: 'el-tracker-8dcc8.firebasestorage.app',
+    iosBundleId: 'com.example.eltrackerApp',
+  );
+
+  static const FirebaseOptions ios = FirebaseOptions(
+    apiKey: 'AIzaSyB3LiYZCw8RsHM07fX-NeBGV0kI9uzZlHY',
+    appId: '1:1091612498519:ios:11d818940d9c2fca112112',
+    messagingSenderId: '1091612498519',
+    projectId: 'el-tracker-8dcc8',
+    storageBucket: 'el-tracker-8dcc8.firebasestorage.app',
+    iosBundleId: 'com.example.eltrackerApp',
+  );
+
 }
