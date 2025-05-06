@@ -1,5 +1,6 @@
 import 'package:eltracker_app/widgets/payment_card.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class LoanView extends StatefulWidget {
   const LoanView({super.key});
@@ -116,7 +117,8 @@ class _LoanViewState extends State<LoanView> {
         _buildFormField(
           label: 'Client Name',
           child: DropdownMenu<String>(
-            label: const Text('Select client'),
+            initialSelection: _selectedClient,
+            label: const Text('Select a client'),
             leadingIcon: const Icon(Icons.search),
             width: MediaQuery.of(context).size.width - 100,
             menuHeight: 200,
@@ -168,20 +170,43 @@ class _LoanViewState extends State<LoanView> {
         // Date and reason
         _buildFormField(
           label: 'Receive Date',
-          child: OutlinedButton(
-            onPressed: () => _selectDate(context),
-            style: OutlinedButton.styleFrom(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              alignment: Alignment.centerLeft,
-              side: BorderSide(color: Colors.grey.shade300),
-            ),
-            child: Text(
-              _receiveDate == null
-                  ? 'Select Date'
-                  : '${_receiveDate!.day}/${_receiveDate!.month}/${_receiveDate!.year}',
-              style: TextStyle(
-                color:
-                    _receiveDate == null ? Colors.grey.shade600 : Colors.black,
+          child: GestureDetector(
+            onTap: () => _selectDate(context),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade50,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color:
+                      _receiveDate == null
+                          ? Colors.grey.shade300
+                          : Theme.of(context).primaryColor.withValues(),
+                ),
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    _receiveDate == null
+                        ? 'Select Date'
+                        : DateFormat('dd MMM yyyy').format(_receiveDate!),
+                    style: TextStyle(
+                      fontSize: 16,
+                      color:
+                          _receiveDate == null
+                              ? Colors.grey.shade600
+                              : Colors.black87,
+                    ),
+                  ),
+                  Icon(
+                    Icons.calendar_month_outlined,
+                    color:
+                        _receiveDate == null
+                            ? Colors.grey.shade500
+                            : Theme.of(context).primaryColor,
+                  ),
+                ],
               ),
             ),
           ),
