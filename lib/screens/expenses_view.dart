@@ -11,6 +11,7 @@ class ExpensesView extends StatefulWidget {
 
 class _ExpensesViewState extends State<ExpensesView> {
   final List<String> _expensesCards = ['1', '2', '3', '4', '5'];
+  // ignore: unused_field
   int _touchedIndex = -1;
 
   // Sample data for the bar chart
@@ -167,27 +168,21 @@ class _ExpensesViewState extends State<ExpensesView> {
             const SizedBox(height: 16),
 
             // Expense List
-            Card(
-              // elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: SizedBox(
-                height: 300,
-                child: ListView.builder(
-                  physics: const BouncingScrollPhysics(),
-                  padding: const EdgeInsets.symmetric(vertical: 8),
-                  itemCount: _expensesCards.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 4,
-                      ),
-                      child: ExpenseCard(cardCount: _expensesCards[index]),
-                    );
-                  },
-                ),
+            SizedBox(
+              height: 300,
+              child: ListView.builder(
+                physics: const BouncingScrollPhysics(),
+                padding: const EdgeInsets.symmetric(vertical: 8),
+                itemCount: _expensesCards.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 4,
+                    ),
+                    child: ExpenseCard(cardCount: _expensesCards[index]),
+                  );
+                },
               ),
             ),
           ],
