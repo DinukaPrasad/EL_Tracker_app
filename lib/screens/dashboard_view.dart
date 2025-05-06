@@ -2,14 +2,14 @@ import 'package:eltracker_app/widgets/payment_card.dart';
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart';
 
-class HomePageView extends StatefulWidget {
-  const HomePageView({super.key});
+class DashboardView extends StatefulWidget {
+  const DashboardView({super.key});
 
   @override
-  State<HomePageView> createState() => _HomePageViewState();
+  State<DashboardView> createState() => _DashboardViewState();
 }
 
-class _HomePageViewState extends State<HomePageView> {
+class _DashboardViewState extends State<DashboardView> {
   final List<String> _deuPaymentCardList = ['1', '2', '3', '4', '5', '6'];
   int _touchedIndex = -1;
 

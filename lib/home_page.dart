@@ -1,19 +1,18 @@
 import 'package:eltracker_app/screens/expenses_view.dart';
-import 'package:eltracker_app/screens/home_view.dart';
+import 'package:eltracker_app/screens/dashboard_view.dart';
 import 'package:eltracker_app/screens/loan_view.dart';
 import 'package:flutter/material.dart';
-class HomePage extends StatefulWidget {
 
+class HomePage extends StatefulWidget {
   final String username;
 
-  const HomePage({super.key , required this.username});
+  const HomePage({super.key, required this.username});
 
   @override
   State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
-
   int currentPageIndex = 1;
 
   @override
@@ -23,15 +22,15 @@ class _HomePageState extends State<HomePage> {
         title: Text('Hi,${widget.username}'),
         actions: <Widget>[
           IconButton(
-            onPressed: (){},
+            onPressed: () {},
             icon: Icon(Icons.person_add),
             tooltip: 'Add new client details',
-           ),
+          ),
           IconButton(
-            onPressed: (){},
+            onPressed: () {},
             icon: Icon(Icons.shopping_cart),
             tooltip: 'Cart',
-           ),
+          ),
         ],
       ),
 
@@ -62,11 +61,12 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
 
-      body: <Widget>[
-        LoanView(),
-        HomePageView(),
-        ExpensesView(),
-      ][currentPageIndex],
+      body:
+          <Widget>[
+            LoanView(),
+            DashboardView(),
+            ExpensesView(),
+          ][currentPageIndex],
     );
   }
 }
