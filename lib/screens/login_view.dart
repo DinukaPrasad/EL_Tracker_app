@@ -21,7 +21,7 @@ class _LoginViewState extends State<LoginView> {
     setState(() => _isLoading = true);
 
     try {
-      await authService.value.singIn(
+      await authService.value.signIn(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
@@ -35,11 +35,30 @@ class _LoginViewState extends State<LoginView> {
         );
       }
     } on FirebaseAuthException catch (e) {
-      _showErrorDialog(e.message ?? 'Login failed. Please try again.');
+      _showErrorDialog(_getFriendlyErrorMessage(e));
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
       }
+    }
+  }
+
+  String _getFriendlyErrorMessage(FirebaseAuthException e) {
+    switch (e.code) {
+      case 'invalid-email':
+        return 'Please enter a valid email address';
+      case 'user-disabled':
+        return 'This account has been disabled';
+      case 'user-not-found':
+        return 'No account found with this email';
+      case 'wrong-password':
+        return 'Incorrect password. Please try again';
+      case 'too-many-requests':
+        return 'Too many attempts. Try again later';
+      case 'network-request-failed':
+        return 'Network error. Check your connection';
+      default:
+        return 'Login failed. Please try again';
     }
   }
 
@@ -63,7 +82,7 @@ class _LoginViewState extends State<LoginView> {
       body: SafeArea(
         child: SingleChildScrollView(
           keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-          padding: const EdgeInsets.symmetric(horizontal: 24),
+          padding: const EdgeInsets.all(24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -109,6 +128,7 @@ class _LoginViewState extends State<LoginView> {
                 ),
               ),
               const SizedBox(height: 8),
+
               TextField(
                 controller: _passwordController,
                 decoration: _inputDecoration(
