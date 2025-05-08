@@ -1,3 +1,4 @@
+import 'package:eltracker_app/screens/client_management.dart';
 import 'package:eltracker_app/screens/expenses_view.dart';
 import 'package:eltracker_app/screens/dashboard_view.dart';
 import 'package:eltracker_app/screens/loan_view.dart';
@@ -22,9 +23,16 @@ class _HomePageState extends State<HomePage> {
         title: Text('Hi,${widget.username}'),
         actions: <Widget>[
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ClientManagementScreen(),
+                ),
+              );
+            },
             icon: Icon(Icons.person_add),
-            tooltip: 'Add new client details',
+            tooltip: 'Client management',
           ),
           IconButton(
             onPressed: () {},
@@ -49,8 +57,8 @@ class _HomePageState extends State<HomePage> {
             label: 'Loan',
           ),
           NavigationDestination(
-            selectedIcon: Icon(Icons.home),
-            icon: Icon(Icons.home_outlined),
+            selectedIcon: Icon(Icons.dashboard),
+            icon: Icon(Icons.dashboard_customize_outlined),
             label: 'Home',
           ),
           NavigationDestination(
