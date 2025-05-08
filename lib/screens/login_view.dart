@@ -1,8 +1,10 @@
+import 'package:eltracker_app/controller/db_service.dart';
+import 'package:eltracker_app/models/user_model.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:eltracker_app/controller/auth_service.dart';
 import 'package:eltracker_app/screens/register_view.dart';
-import 'package:eltracker_app/home_page.dart';
+import 'package:eltracker_app/screens/home_page.dart';
 
 class LoginView extends StatefulWidget {
   const LoginView({super.key});
@@ -21,21 +23,36 @@ class _LoginViewState extends State<LoginView> {
     setState(() => _isLoading = true);
 
     try {
-      await authService.value.signIn(
+      UserCredential loggedUser = await authService.value.signIn(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
 
-      if (mounted) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) => HomePage(username: _emailController.text),
-          ),
+      if (loggedUser.user != null) {
+        // Properly await the user data and handle the Future
+        UserModel? userDetails = await DbService().getUser(
+          loggedUser.user!.uid,
         );
+
+        if (userDetails != null) {
+          print('User details: $userDetails');
+          if (mounted) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(
+                // Pass the actual username from userDetails instead of email
+                builder: (context) => HomePage(username: userDetails.name),
+              ),
+            );
+          }
+        } else {
+          _showErrorDialog('User data not found');
+        }
       }
     } on FirebaseAuthException catch (e) {
       _showErrorDialog(_getFriendlyErrorMessage(e));
+    } catch (e) {
+      _showErrorDialog('An error occurred. Please try again');
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
