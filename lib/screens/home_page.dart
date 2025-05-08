@@ -59,7 +59,7 @@ class _HomePageState extends State<HomePage> {
           NavigationDestination(
             selectedIcon: Icon(Icons.dashboard),
             icon: Icon(Icons.dashboard_customize_outlined),
-            label: 'Home',
+            label: 'Dashboard',
           ),
           NavigationDestination(
             selectedIcon: Icon(Icons.wallet),
