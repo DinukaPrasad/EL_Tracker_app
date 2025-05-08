@@ -25,6 +25,42 @@ class _RegisterViewState extends State<RegisterView> {
   bool _obscurePassword = true;
   bool _obscureConfirmPassword = true;
 
+  @override
+  void initState() {
+    super.initState();
+    // Add listeners to all text controllers
+    _emailController.addListener(_updateButtonState);
+    _passwordController.addListener(_updateButtonState);
+    _confirmPasswordController.addListener(_updateButtonState);
+    _nameController.addListener(_updateButtonState);
+    _ageController.addListener(_updateButtonState);
+  }
+
+  @override
+  void dispose() {
+    // Remove all listeners when disposing
+    _emailController.removeListener(_updateButtonState);
+    _passwordController.removeListener(_updateButtonState);
+    _confirmPasswordController.removeListener(_updateButtonState);
+    _nameController.removeListener(_updateButtonState);
+    _ageController.removeListener(_updateButtonState);
+    super.dispose();
+  }
+
+  // Method to check if all fields are filled
+  bool _areAllFieldsFilled() {
+    return _emailController.text.trim().isNotEmpty &&
+        _passwordController.text.trim().isNotEmpty &&
+        _confirmPasswordController.text.trim().isNotEmpty &&
+        _nameController.text.trim().isNotEmpty &&
+        _ageController.text.trim().isNotEmpty;
+  }
+
+  // Method to update button state
+  void _updateButtonState() {
+    setState(() {}); // Trigger rebuild to update button state
+  }
+
   Future<void> _register() async {
     String email = _emailController.text.trim();
     String password = _passwordController.text.trim();
@@ -128,7 +164,7 @@ class _RegisterViewState extends State<RegisterView> {
                   style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
                 ),
 
-                const SizedBox(height: 40),
+                const SizedBox(height: 20),
 
                 // Name Field
                 Text(
@@ -139,6 +175,7 @@ class _RegisterViewState extends State<RegisterView> {
                   ),
                 ),
                 const SizedBox(height: 8),
+
                 TextFormField(
                   controller: _nameController,
                   decoration: _inputDecoration(
@@ -168,7 +205,10 @@ class _RegisterViewState extends State<RegisterView> {
                 const SizedBox(height: 8),
                 TextFormField(
                   controller: _ageController,
-                  decoration: _inputDecoration('Enter your age', '25'),
+                  decoration: _inputDecoration(
+                    'Enter your age',
+                    'Greater than 10',
+                  ),
                   keyboardType: TextInputType.number,
                   textInputAction: TextInputAction.next,
                   validator: (value) {
@@ -178,7 +218,7 @@ class _RegisterViewState extends State<RegisterView> {
                     if (int.tryParse(value) == null) {
                       return 'Please enter a valid number';
                     }
-                    if (int.parse(value) <= 0) {
+                    if (int.parse(value) <= 10) {
                       return 'Please enter a valid age';
                     }
                     return null;
@@ -316,12 +356,18 @@ class _RegisterViewState extends State<RegisterView> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: _isLoading ? null : _register,
+                    onPressed:
+                        _isLoading || !_areAllFieldsFilled() ? null : _register,
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8),
                       ),
+                      // Optional: Change button color when disabled
+                      backgroundColor:
+                          _isLoading || !_areAllFieldsFilled()
+                              ? Colors.grey.shade300
+                              : Theme.of(context).primaryColor,
                     ),
                     child:
                         _isLoading
@@ -335,7 +381,10 @@ class _RegisterViewState extends State<RegisterView> {
                             )
                             : const Text(
                               'Create Account',
-                              style: TextStyle(fontSize: 16),
+                              style: TextStyle(
+                                fontSize: 16,
+                                color: Colors.white,
+                              ),
                             ),
                   ),
                 ),
