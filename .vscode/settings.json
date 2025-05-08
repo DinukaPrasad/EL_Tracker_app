@@ -1,3 +1,8 @@
 {
-    "cmake.sourceDirectory": "D:/Flutter-projects/eltracker_app/linux"
+    "cmake.sourceDirectory": "D:/Flutter-projects/eltracker_app/linux",
+    "cSpell.words": [
+        "Cupertino",
+        "Schyler",
+        "sqflite"
+    ]
 }
