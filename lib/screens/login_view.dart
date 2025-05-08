@@ -29,18 +29,17 @@ class _LoginViewState extends State<LoginView> {
       );
 
       if (loggedUser.user != null) {
-        // Properly await the user data and handle the Future
         UserModel? userDetails = await DbService().getUser(
           loggedUser.user!.uid,
         );
 
         if (userDetails != null) {
+          // ignore: avoid_print
           print('User details: $userDetails');
           if (mounted) {
             Navigator.pushReplacement(
               context,
               MaterialPageRoute(
-                // Pass the actual username from userDetails instead of email
                 builder: (context) => HomePage(username: userDetails.name),
               ),
             );
