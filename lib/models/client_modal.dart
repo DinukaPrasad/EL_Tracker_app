@@ -59,32 +59,4 @@ class ClientModal {
       updatedAt: updatedAt ?? DateTime.now(),
     );
   }
-
-  // Helper method to create from DocumentSnapshot
-  factory ClientModal.fromSnapshot(DocumentSnapshot snapshot) {
-    return ClientModal.fromJson(snapshot.data() as Map<String, Object?>);
-  }
-
-  // For equality comparison
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ClientModal &&
-          runtimeType == other.runtimeType &&
-          firstName == other.firstName &&
-          lastName == other.lastName &&
-          address == other.address &&
-          phone == other.phone;
-
-  @override
-  int get hashCode =>
-      firstName.hashCode ^
-      lastName.hashCode ^
-      address.hashCode ^
-      phone.hashCode;
-
-  @override
-  String toString() {
-    return 'ClientModal{firstName: $firstName, lastName: $lastName, address: $address, phone: $phone, createdAt: $createdAt, updatedAt: $updatedAt}';
-  }
 }
