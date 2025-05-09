@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 class ExpenseCard extends StatelessWidget {
-
   final String cardCount;
   const ExpenseCard({super.key, required this.cardCount});
 
