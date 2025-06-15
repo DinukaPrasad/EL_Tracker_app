@@ -1,4 +1,9 @@
-import 'package:eltracker_app/widgets/payment_card.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:eltracker_app/controller/client_service.dart';
+import 'package:eltracker_app/controller/loan_service.dart';
+import 'package:eltracker_app/models/client_modal.dart';
+import 'package:eltracker_app/models/loan_modal.dart';
+import 'package:eltracker_app/widgets/loan_card.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -14,10 +19,15 @@ class _LoanViewState extends State<LoanView> {
   final TextEditingController _interestController = TextEditingController();
   final TextEditingController _reasonController = TextEditingController();
 
+  final LoanService _loanService = LoanService();
+  final ClientService _clientService = ClientService();
+
   String? _selectedClient;
   bool _pendingChecked = true;
   bool _paidChecked = true;
   DateTime? _receiveDate;
+  // ignore: unused_field
+  bool _isLoading = false;
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
@@ -34,7 +44,91 @@ class _LoanViewState extends State<LoanView> {
     }
   }
 
-  final List loanList = ['1', '2', '3', '4', '5', '6', '7'];
+  Future<void> _submitLoan() async {
+    // Validate all fields before proceeding
+    if (_amountController.text.isEmpty ||
+        _interestController.text.isEmpty ||
+        _reasonController.text.isEmpty ||
+        _receiveDate == null ||
+        _selectedClient == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please fill all fields'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Parse numeric values with error handling
+    int? amount;
+    int? interest;
+    try {
+      amount = int.parse(_amountController.text);
+      interest = int.parse(_interestController.text);
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter valid numbers for amount and interest'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    // Validate amount and interest values
+    if (amount <= 0 || interest < 0 || interest > 100) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            'Amount must be positive and interest cannot be negative',
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final newLoan = LoanModal(
+        amount: amount,
+        interest: interest,
+        clientId: _selectedClient!,
+        reason: _reasonController.text,
+        receiveDate: _receiveDate!,
+      );
+
+      await _loanService.addLoan(newLoan);
+
+      // Clear form after successful submission
+      _amountController.clear();
+      _interestController.clear();
+      _reasonController.clear();
+      setState(() {
+        _receiveDate = null;
+        _selectedClient = null;
+        _isLoading = false;
+      });
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Loan added successfully!'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      setState(() => _isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Failed to add loan: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
 
   @override
   void dispose() {
@@ -77,20 +171,6 @@ class _LoanViewState extends State<LoanView> {
               _buildLoanListSection(),
 
               const SizedBox(height: 16),
-
-              // Loan list
-              SizedBox(
-                height: 250,
-                child: ListView.builder(
-                  itemCount: loanList.length,
-                  itemBuilder: (context, index) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: DeuPaymentCard(cardCount: loanList[index]),
-                    );
-                  },
-                ),
-              ),
             ],
           ),
         ),
@@ -113,25 +193,47 @@ class _LoanViewState extends State<LoanView> {
   Widget _buildInputForm() {
     return Column(
       children: [
-        // Client selection
         _buildFormField(
           label: 'Client Name',
-          child: DropdownMenu<String>(
-            initialSelection: _selectedClient,
-            label: const Text('Select a client'),
-            leadingIcon: const Icon(Icons.search),
-            width: MediaQuery.of(context).size.width - 100,
-            menuHeight: 200,
-            enableFilter: true,
-            dropdownMenuEntries: const [
-              DropdownMenuEntry(value: 'Dinuka', label: 'Dinuka'),
-              DropdownMenuEntry(value: 'Shaki', label: 'Shaki'),
-              DropdownMenuEntry(value: 'Henzer', label: 'Henzer'),
-            ],
-            onSelected: (String? value) {
-              _selectedClient = value;
-              // ignore: avoid_print
-              print(_selectedClient);
+          child: StreamBuilder<QuerySnapshot<ClientModal>>(
+            stream: _clientService.getClients(),
+            builder: (context, snapshot) {
+              if (snapshot.hasError) {
+                return Text('Error: ${snapshot.error}');
+              }
+
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              final clients = snapshot.data?.docs ?? [];
+
+              if (clients.isEmpty) {
+                return const Center(child: Text('No Clients found'));
+              }
+
+              return DropdownMenu(
+                initialSelection: _selectedClient,
+                label: const Text('Select a client'),
+                leadingIcon: Icon(Icons.search),
+                width: MediaQuery.of(context).size.width - 100,
+                menuHeight: 200,
+                enableFilter: true,
+                dropdownMenuEntries:
+                    clients.map((doc) {
+                      final client = doc.data();
+                      return DropdownMenuEntry<String>(
+                        value: doc.id,
+                        label: '${client.firstName} ${client.lastName}',
+                      );
+                    }).toList(),
+                onSelected: (String? value) {
+                  setState(() {
+                    _selectedClient = value;
+                  });
+                  debugPrint('selected client ID: $value');
+                },
+              );
             },
           ),
         ),
@@ -254,7 +356,9 @@ class _LoanViewState extends State<LoanView> {
             ),
             const SizedBox(width: 12),
             ElevatedButton(
-              onPressed: () {},
+              onPressed: () {
+                _submitLoan();
+              },
               style: ElevatedButton.styleFrom(
                 padding: const EdgeInsets.symmetric(
                   horizontal: 24,
@@ -339,7 +443,40 @@ class _LoanViewState extends State<LoanView> {
             ),
           ],
         ),
+
+        SizedBox(height: 250, child: _buildLoanList()),
       ],
+    );
+  }
+
+  Widget _buildLoanList() {
+    return StreamBuilder<QuerySnapshot<LoanModal>>(
+      stream: _loanService.getAllLoans(),
+      builder: (context, snapshot) {
+        if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        }
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final loans = snapshot.data?.docs ?? [];
+
+        if (loans.isEmpty) {
+          return const Center(child: Text('No loans found'));
+        }
+
+        return ListView.builder(
+          itemCount: loans.length,
+          itemBuilder: (context, index) {
+            final loan = loans[index].data();
+            final loanID = loans[index].id;
+
+            return LoanCard(loan: loan, loanId: loanID);
+          },
+        );
+      },
     );
   }
 }
