@@ -31,3 +31,6 @@ A **Flutter mobile application** for tracking personal expenses and loan offers 
    ```bash
    git clone https://github.com/yourusername/expense-loan-tracker.git
    cd expense-loan-tracker
+
+
+### this is for demo perporse
