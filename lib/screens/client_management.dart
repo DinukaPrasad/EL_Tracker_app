@@ -169,7 +169,16 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
                           onPressed: _isLoading ? null : _addClient,
                           child:
                               _isLoading
-                                  ? const CircularProgressIndicator()
+                                  ? SizedBox(
+                                    height: 20,
+                                    width: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      valueColor: AlwaysStoppedAnimation<Color>(
+                                        Colors.white,
+                                      ),
+                                    ),
+                                  )
                                   : const Text('Add Client'),
                         ),
                       ),
@@ -328,6 +337,7 @@ class _EditClientScreenState extends State<EditClientScreen> {
   late final TextEditingController _lastNameController;
   late final TextEditingController _addressController;
   late final TextEditingController _phoneController;
+  final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
   @override
@@ -349,6 +359,7 @@ class _EditClientScreenState extends State<EditClientScreen> {
   }
 
   Future<void> _updateClient() async {
+    if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
     try {
       final updatedClient = widget.client.copyWith(
@@ -382,51 +393,85 @@ class _EditClientScreenState extends State<EditClientScreen> {
         title: const Text('Edit Client'),
         actions: [
           IconButton(
-            onPressed: _updateClient,
+            onPressed: _isLoading ? null : _updateClient,
             icon:
                 _isLoading
-                    ? const CircularProgressIndicator()
+                    ? SizedBox(
+                      height: 20,
+                      width: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                      ),
+                    )
                     : const Icon(Icons.save),
           ),
         ],
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
-        child: Column(
-          children: [
-            TextFormField(
-              controller: _firstNameController,
-              decoration: const InputDecoration(
-                labelText: 'First Name',
-                border: OutlineInputBorder(),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              TextFormField(
+                controller: _firstNameController,
+                decoration: const InputDecoration(
+                  labelText: 'First Name',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter first name';
+                  }
+                  return null;
+                },
               ),
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _lastNameController,
-              decoration: const InputDecoration(
-                labelText: 'Last Name',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _lastNameController,
+                decoration: const InputDecoration(
+                  labelText: 'Last Name',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter last name';
+                  }
+                  return null;
+                },
               ),
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _addressController,
-              decoration: const InputDecoration(
-                labelText: 'Address',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _addressController,
+                decoration: const InputDecoration(
+                  labelText: 'Address',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter address';
+                  }
+                  return null;
+                },
               ),
-            ),
-            const SizedBox(height: 12),
-            TextFormField(
-              controller: _phoneController,
-              decoration: const InputDecoration(
-                labelText: 'Phone Number',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 12),
+              TextFormField(
+                controller: _phoneController,
+                decoration: const InputDecoration(
+                  labelText: 'Phone Number',
+                  border: OutlineInputBorder(),
+                ),
+                keyboardType: TextInputType.phone,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter phone number';
+                  }
+                  return null;
+                },
               ),
-              keyboardType: TextInputType.phone,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

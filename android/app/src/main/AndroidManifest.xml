@@ -30,6 +30,13 @@
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />
+            <!-- Add custom icons in mipmap folders and splash in drawable/launch_background.xml -->
+        </application>
+
+        <!-- Example permissions for internet, camera, and location -->
+        <uses-permission android:name="android.permission.INTERNET" />
+        <uses-permission android:name="android.permission.CAMERA" />
+        <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     </application>
     <!-- Required to query activities that can process text, see:
          https://developer.android.com/training/package-visibility and

@@ -18,6 +18,28 @@ class _LoginViewState extends State<LoginView> {
   final TextEditingController _passwordController = TextEditingController();
   bool _isLoading = false;
   bool _obscurePassword = true;
+  bool _canLogin = false;
+  @override
+  void initState() {
+    super.initState();
+    _emailController.addListener(_updateLoginButtonState);
+    _passwordController.addListener(_updateLoginButtonState);
+  }
+
+  @override
+  void dispose() {
+    _emailController.removeListener(_updateLoginButtonState);
+    _passwordController.removeListener(_updateLoginButtonState);
+    super.dispose();
+  }
+
+  void _updateLoginButtonState() {
+    setState(() {
+      _canLogin =
+          _emailController.text.trim().isNotEmpty &&
+          _passwordController.text.trim().isNotEmpty;
+    });
+  }
 
   Future<void> _login() async {
     setState(() => _isLoading = true);
@@ -37,10 +59,10 @@ class _LoginViewState extends State<LoginView> {
           // ignore: avoid_print
           print('User details: $userDetails');
           if (mounted) {
-            Navigator.pushReplacement(
-              context,
+            Navigator.of(context).pushReplacement(
               MaterialPageRoute(
                 builder: (context) => HomePage(username: userDetails.name),
+                settings: const RouteSettings(),
               ),
             );
           }
@@ -115,7 +137,7 @@ class _LoginViewState extends State<LoginView> {
                 style: TextStyle(fontSize: 16, color: Colors.grey.shade600),
               ),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: 20),
 
               // Email Field
               Text(
@@ -128,7 +150,10 @@ class _LoginViewState extends State<LoginView> {
               const SizedBox(height: 8),
               TextField(
                 controller: _emailController,
-                decoration: _inputDecoration('Enter your email'),
+                decoration: _inputDecoration(
+                  'Enter your email',
+                  suffixIcon: null,
+                ),
                 keyboardType: TextInputType.emailAddress,
                 textInputAction: TextInputAction.next,
               ),
@@ -144,7 +169,6 @@ class _LoginViewState extends State<LoginView> {
                 ),
               ),
               const SizedBox(height: 8),
-
               TextField(
                 controller: _passwordController,
                 decoration: _inputDecoration(
@@ -167,6 +191,12 @@ class _LoginViewState extends State<LoginView> {
               ),
 
               const SizedBox(height: 8),
+              Text(
+                'Use 8 or more characters with a mix of letters, numbers & symbols',
+                style: TextStyle(fontSize: 12, color: Colors.grey.shade600),
+              ),
+
+              const SizedBox(height: 8),
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton(
@@ -186,12 +216,16 @@ class _LoginViewState extends State<LoginView> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: _isLoading ? null : _login,
+                  onPressed: _isLoading || !_canLogin ? null : _login,
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
+                    backgroundColor:
+                        _isLoading || !_canLogin
+                            ? Colors.grey.shade300
+                            : Theme.of(context).primaryColor,
                   ),
                   child:
                       _isLoading
@@ -203,7 +237,10 @@ class _LoginViewState extends State<LoginView> {
                               color: Colors.white,
                             ),
                           )
-                          : const Text('Login', style: TextStyle(fontSize: 16)),
+                          : const Text(
+                            'Login',
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
                 ),
               ),
 
@@ -229,14 +266,15 @@ class _LoginViewState extends State<LoginView> {
               // Register Button
               Center(
                 child: TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const RegisterView(),
-                      ),
-                    );
-                  },
+                  onPressed:
+                      _isLoading
+                          ? null
+                          : () => Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => const RegisterView(),
+                            ),
+                          ),
                   child: RichText(
                     text: TextSpan(
                       text: "Don't have an account? ",
@@ -263,7 +301,8 @@ class _LoginViewState extends State<LoginView> {
 
   InputDecoration _inputDecoration(String hintText, {Widget? suffixIcon}) {
     return InputDecoration(
-      hintText: hintText,
+      labelText: hintText,
+      hintText: '',
       filled: true,
       fillColor: Colors.grey.shade50,
       border: OutlineInputBorder(
