@@ -3,6 +3,7 @@ import 'package:eltracker_app/controller/client_service.dart';
 import 'package:flutter/material.dart';
 import 'package:eltracker_app/models/client_modal.dart';
 
+/// Main screen for managing clients: add, view, edit, delete.
 class ClientManagementScreen extends StatefulWidget {
   const ClientManagementScreen({super.key});
 
@@ -19,6 +20,7 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
   final TextEditingController _phoneController = TextEditingController();
   bool _isLoading = false;
 
+  /// Dispose controllers to free resources.
   @override
   void dispose() {
     _firstNameController.dispose();
@@ -28,6 +30,7 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
     super.dispose();
   }
 
+  /// Clears all input fields in the add client form.
   void clearAllFields() {
     _firstNameController.clear();
     _lastNameController.clear();
@@ -35,6 +38,7 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
     _phoneController.clear();
   }
 
+  /// Handles adding a new client to Firestore.
   Future<void> _addClient() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -49,7 +53,6 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
 
       await _clientService.addClient(newClient);
       if (!mounted) return;
-      // Clear form after successful submission
       _formKey.currentState!.reset();
       clearAllFields();
 
@@ -65,6 +68,7 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
     }
   }
 
+  /// Handles deleting a client from Firestore.
   Future<void> _deleteClient(String clientId) async {
     try {
       await _clientService.deleteClient(clientId);
@@ -79,6 +83,7 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
     }
   }
 
+  /// Builds the main UI for client management.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -88,7 +93,7 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Add New Client Section
+            // Card for adding a new client
             Card(
               elevation: 4,
               child: Padding(
@@ -98,6 +103,7 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      // Title for add client section
                       const Text(
                         'Add New Client',
                         style: TextStyle(
@@ -106,6 +112,7 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
                         ),
                       ),
                       const SizedBox(height: 16),
+                      // First Name input
                       TextFormField(
                         controller: _firstNameController,
                         decoration: const InputDecoration(
@@ -120,6 +127,7 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
                         },
                       ),
                       const SizedBox(height: 12),
+                      // Last Name input
                       TextFormField(
                         controller: _lastNameController,
                         decoration: const InputDecoration(
@@ -134,6 +142,7 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
                         },
                       ),
                       const SizedBox(height: 12),
+                      // Address input
                       TextFormField(
                         controller: _addressController,
                         decoration: const InputDecoration(
@@ -148,6 +157,7 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
                         },
                       ),
                       const SizedBox(height: 12),
+                      // Phone Number input
                       TextFormField(
                         controller: _phoneController,
                         decoration: const InputDecoration(
@@ -163,6 +173,7 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
                         },
                       ),
                       const SizedBox(height: 16),
+                      // Button to add client
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
@@ -188,12 +199,13 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
               ),
             ),
             const SizedBox(height: 24),
-            // Client List Section
+            // Title for client list section
             const Text(
               'All Clients',
               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 12),
+            // StreamBuilder to show all clients
             StreamBuilder<QuerySnapshot<ClientModal>>(
               stream: _clientService.getClients(),
               builder: (context, snapshot) {
@@ -211,6 +223,7 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
                   return const Center(child: Text('No clients found'));
                 }
 
+                // List of clients
                 return ListView.builder(
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
@@ -219,6 +232,7 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
                     final client = clients[index].data();
                     final clientId = clients[index].id;
 
+                    // Card for each client
                     return Card(
                       margin: const EdgeInsets.only(bottom: 12),
                       child: ListTile(
@@ -242,7 +256,6 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
                           onPressed: () => _deleteClient(clientId),
                         ),
                         onTap: () {
-                          // Navigate to edit screen or show details
                           _showClientDetails(context, client, clientId);
                         },
                       ),
@@ -257,6 +270,7 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
     );
   }
 
+  /// Shows a dialog with client details and options to edit.
   void _showClientDetails(
     BuildContext context,
     ClientModal client,
@@ -296,12 +310,13 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
     );
   }
 
+  /// Navigates to the edit client screen.
   void _navigateToEditScreen(
     BuildContext context,
     ClientModal client,
     String clientId,
   ) {
-    Navigator.pop(context); // Close the details dialog
+    Navigator.pop(context);
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -316,6 +331,7 @@ class _ClientManagementScreenState extends State<ClientManagementScreen> {
   }
 }
 
+/// Screen for editing an existing client.
 class EditClientScreen extends StatefulWidget {
   final ClientModal client;
   final String clientId;
@@ -340,6 +356,7 @@ class _EditClientScreenState extends State<EditClientScreen> {
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
+  /// Initializes controllers with existing client data.
   @override
   void initState() {
     super.initState();
@@ -349,6 +366,7 @@ class _EditClientScreenState extends State<EditClientScreen> {
     _phoneController = TextEditingController(text: widget.client.phone);
   }
 
+  /// Dispose controllers to free resources.
   @override
   void dispose() {
     _firstNameController.dispose();
@@ -358,6 +376,7 @@ class _EditClientScreenState extends State<EditClientScreen> {
     super.dispose();
   }
 
+  /// Handles updating client information in Firestore.
   Future<void> _updateClient() async {
     if (!_formKey.currentState!.validate()) return;
     setState(() => _isLoading = true);
@@ -386,6 +405,7 @@ class _EditClientScreenState extends State<EditClientScreen> {
     }
   }
 
+  /// Builds the UI for editing a client.
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -414,6 +434,7 @@ class _EditClientScreenState extends State<EditClientScreen> {
           key: _formKey,
           child: Column(
             children: [
+              // First Name input
               TextFormField(
                 controller: _firstNameController,
                 decoration: const InputDecoration(
@@ -428,6 +449,7 @@ class _EditClientScreenState extends State<EditClientScreen> {
                 },
               ),
               const SizedBox(height: 12),
+              // Last Name input
               TextFormField(
                 controller: _lastNameController,
                 decoration: const InputDecoration(
@@ -442,6 +464,7 @@ class _EditClientScreenState extends State<EditClientScreen> {
                 },
               ),
               const SizedBox(height: 12),
+              // Address input
               TextFormField(
                 controller: _addressController,
                 decoration: const InputDecoration(
@@ -456,6 +479,7 @@ class _EditClientScreenState extends State<EditClientScreen> {
                 },
               ),
               const SizedBox(height: 12),
+              // Phone Number input
               TextFormField(
                 controller: _phoneController,
                 decoration: const InputDecoration(
